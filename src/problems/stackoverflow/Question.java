@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class Question {
+public class Question implements Commentable , Votable {
     private final Integer id;
     private final String title;
     private final String content;
@@ -53,4 +53,54 @@ public class Question {
         return (int) (System.currentTimeMillis()%Integer.MAX_VALUE);
     }
 
+    @Override
+    public void addComment(Comment comment) {
+        if (comment == null) {
+            throw new IllegalArgumentException("Comment cannot be null");
+        }
+        comments.add(comment);
+    }
+
+    @Override
+    public void removeComment(Comment comment) {
+        if (comment == null) {
+            throw new IllegalArgumentException("Comment cannot be null");
+        }
+        comments.remove(comment);
+    }
+
+    @Override
+    public int getCommentCount() {
+        return comments.size();
+    }
+
+    @Override
+    public void vote(User voter, VoteType voteType) {
+        if (voter == null) {
+            throw new IllegalArgumentException("Voter cannot be null");
+        }
+        if (voteType == null) {
+            throw new IllegalArgumentException("Vote type cannot be null");
+        }
+        votes.removeIf(vote -> vote.getVoter().equals(voter));
+        Vote vote = new Vote(voter, voteType);
+        votes.add(vote);
+        author.updateReputation(voteType == VoteType.UPVOTE ? 5 : -5);
+    }
+
+    @Override
+    public int getVoteCount() {
+        return votes.stream()
+                .mapToInt(vote -> vote.getVoteType() == VoteType.UPVOTE ? 1 : -1)
+                .sum();
+    }
+    // Getters
+    public int getId() { return id; }
+    public User getAuthor() { return author; }
+    public String getTitle() { return title; }
+    public String getContent() { return content; }
+    public Date getCreationDate() { return creationDate; }
+    public List<Answer> getAnswers() { return new ArrayList<>(answers); }
+    public List<Tag> getTags() { return new ArrayList<>(tags); }
+    public Answer getAcceptedAnswer() {return acceptedAnswer;}
 }

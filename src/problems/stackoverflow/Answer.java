@@ -1,10 +1,12 @@
 package problems.stackoverflow;
 
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Data
+@Data // Using Lombok's @Data to generate getters, setters, equals, hashCode, and toString methods
 public class Answer implements Votable , Commentable {
     private final int id;
     private final String content;

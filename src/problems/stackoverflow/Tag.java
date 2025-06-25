@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 public class Tag {
-    Integer id;
-    String val;
+    private final int id;
+    private final String val;
 
     public Tag( String val) {
         this.id =generateId();

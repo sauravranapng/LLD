@@ -3,20 +3,31 @@ package problems.stackoverflow;
 
 import lombok.Data;
 
-import java.sql.Date;
+import java.util.Date;
 
 @Data
 public class Comment {
-    Integer id;
-    String content;
-    String author;
-    Date createdAt;
+    private final Integer id;
+    private  String content;
+    private final   User author;
+    private final   Date createdAt;
 
-    public Comment(Integer id, String content, String author, Date createdAt) {
-        this.id = id;
+    public Comment(String content, User author) {
+        this.id =generateId();
         this.content = content;
         this.author = author;
-        this.createdAt = createdAt;
+        this.createdAt = new Date(); //UTC time
+    }
+
+    private int generateId() {
+        return (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+    }
+    private synchronized int editComment(String newContent) {
+        if (newContent == null || newContent.isEmpty()) {
+            throw new IllegalArgumentException("New content cannot be null or empty");
+        }
+        this.content = newContent;
+        return this.id; // Return the ID of the edited comment
     }
 
     /*
