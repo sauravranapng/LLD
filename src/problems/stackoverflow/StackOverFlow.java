@@ -1,7 +1,9 @@
 package problems.stackoverflow;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class StackOverFlow {
         private final Map<Integer, User> users;
@@ -24,15 +26,23 @@ public class StackOverFlow {
         }
 
         public Question askQuestion(User user, String title, String content, List<String> tags) {
+            if (user == null) {
+                throw new IllegalArgumentException("User cannot be null");
+            }
+            //we have moved the question creation logic to the User class because it makes more sense there.
             Question question = user.askQuestion(title, content, tags);
             questions.put(question.getId(), question);
             for (Tag tag : question.getTags()) {
-                this.tags.putIfAbsent(tag.getName(), tag);
+                this.tags.putIfAbsent(tag.getVal(), tag);
             }
             return question;
         }
 
         public Answer answerQuestion(User user, Question question, String content) {
+            if (user == null) {
+                throw new IllegalArgumentException("User cannot be null");
+            }
+            //we have moved the answer creation logic to the User class because it makes more sense there.
             Answer answer = user.answerQuestion(question, content);
             answers.put(answer.getId(), answer);
             return answer;
@@ -42,23 +52,24 @@ public class StackOverFlow {
             return user.addComment(commentable, content);
         }
 
-        public void voteQuestion(User user, Question question, VoteType type) {
-            question.vote(user, type);
+        public void voteForEntity(User user,Votable votable, VoteType type) {
+            user.vote(votable, type);
         }
 
-        public void voteAnswer(User user, Answer answer, VoteType type) {
-            answer.vote(user, type);
+        public void acceptAnswer(User user, Answer answer) {
+        Question question = answer.getQuestion();
+        if (!question.getAuthor().equals(user)) {
+            throw new IllegalArgumentException("Only the question author can accept an answer.");
         }
-
-        public void acceptAnswer(Answer answer) {
-            answer.markAsAccepted();
+        answer.markAsAccepted();
+        question.setAcceptedAnswer(answer);
         }
 
         public List<Question> searchQuestions(String query) {
             return questions.values().stream()
                     .filter(q -> q.getTitle().toLowerCase().contains(query.toLowerCase()) ||
                             q.getContent().toLowerCase().contains(query.toLowerCase()) ||
-                            q.getTags().stream().anyMatch(t -> t.getName().equalsIgnoreCase(query)))
+                            q.getTags().stream().anyMatch(t -> t.getVal().equalsIgnoreCase(query)))
                     .collect(Collectors.toList());
         }
 
