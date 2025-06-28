@@ -53,7 +53,17 @@ public class User {
             this.reputation = 0;
         }
     }
-
+  public void acceptAnswer(Answer answer) {
+        if (answer == null) {
+            throw new IllegalArgumentException("Answer cannot be null");
+        }
+      Question question = answer.getQuestion();
+      if (!this.equals(question.getAuthor())) {
+          throw new IllegalArgumentException("Only the question author can accept an answer.");
+      }
+      question.setAcceptedAnswer(answer);
+      // Assuming accepting an answer gives reputation
+    }
     //Commentable interface reference variable which can old both Question and Answer objects.
     // So we don't need to overload the addComment method for both Question and Answer classes.
     public Comment addComment(Commentable commentable, String content) {

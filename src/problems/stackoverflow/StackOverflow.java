@@ -5,13 +5,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class StackOverFlow {
+public class StackOverflow {
         private final Map<Integer, User> users;
         private final Map<Integer, Question> questions;
         private final Map<Integer, Answer> answers;
         private final Map<String, Tag> tags;
 
-        public StackOverFlow() {
+        public StackOverflow() {
             users = new ConcurrentHashMap<>();
             questions = new ConcurrentHashMap<>();
             answers = new ConcurrentHashMap<>();
@@ -48,21 +48,17 @@ public class StackOverFlow {
             return answer;
         }
 
-        public Comment addComment(User user, Commentable commentable, String content) {
-            return user.addComment(commentable, content);
-        }
+        public Comment addComment(User user, Commentable commentable, String content) {return user.addComment(commentable, content);}
 
-        public void voteForEntity(User user,Votable votable, VoteType type) {
+        public void vote(User user,Votable votable, VoteType type) {
             user.vote(votable, type);
         }
 
         public void acceptAnswer(User user, Answer answer) {
-        Question question = answer.getQuestion();
-        if (!question.getAuthor().equals(user)) {
-            throw new IllegalArgumentException("Only the question author can accept an answer.");
+        if (user == null) {
+            throw new IllegalArgumentException("User and answer cannot be null");
         }
-        answer.markAsAccepted();
-        question.setAcceptedAnswer(answer);
+        user.acceptAnswer(answer);
         }
 
         public List<Question> searchQuestions(String query) {
@@ -83,4 +79,4 @@ public class StackOverFlow {
         public Answer getAnswer(int id) { return answers.get(id); }
         public Tag getTag(String name) { return tags.get(name); }
     }
-}
+
