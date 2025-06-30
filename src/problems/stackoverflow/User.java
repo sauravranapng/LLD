@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class User {
+public class User implements Observer{
     private final int id;
     private final String userName;
     private final String email;
@@ -64,7 +64,7 @@ public class User {
       question.setAcceptedAnswer(answer);
       // Assuming accepting an answer gives reputation
     }
-    //Commentable interface reference variable which can old both Question and Answer objects.
+    //Commentable interface reference variable which can hold both Question and Answer objects.
     // So we don't need to overload the addComment method for both Question and Answer classes.
     public Comment addComment(Commentable commentable, String content) {
         if (commentable == null) {
@@ -89,5 +89,10 @@ public class User {
         votable.vote(this, voteType);
     }
 
+
+    @Override
+    public void notify(Entity entity , String action) {
+        System.out.println("Sending email to " + userName + " about a new action: "+ action +"\n"+entity.getContent());
+    }
 
 }

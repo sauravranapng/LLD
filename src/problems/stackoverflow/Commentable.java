@@ -7,4 +7,5 @@ public interface Commentable {
     void removeComment(Comment comment);
     List<Comment> getComments();
     int getCommentCount();
+    int editComment(String newContent);
 }
